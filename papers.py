@@ -16,7 +16,7 @@ import datetime
 import json
 
 
-#def decide(input_file, watchlist_file, countries_file):
+# def decide(input_file, watchlist_file, countries_file):
 def decide():
     """
     Decides whether a traveller's entry into Kanadia should be accepted
@@ -28,10 +28,33 @@ def decide():
     :return: List of strings. Possible values of strings are: "Accept", "Reject", "Secondary", and "Quarantine"
     """
     with open("countries.json", "r") as file_reader:
-        countries_list = file_reader.read()
-        countries_list = json.loads(countries_list)
-        #(countries_list)
-   # return ["Reject"]
+        countries_file = file_reader.read()
+        countries = json.loads(countries_file)
+    with open("example_entries.json", "r") as file_reader:
+        sample_entries_file = file_reader.read()
+        sample_entries = json.loads(sample_entries_file)
+    for item in sample_entries:
+        # print(item["passport"])
+        """Condition to check if the traveller details are incomplete"""
+        """if item["passport"] and item["first_name"] and item["last_name"] and item["birth_date"] and item["home"][
+            "city"] and item["home"]["region"] and item["home"]["country"] and item["entry_reason"] and item["from"][
+            "city"] and item["from"]["region"] and item["from"]["country"]:
+            print("")
+        else:
+            print("")"""""
+    for item in sample_entries:
+       country = item["from"]["country"]
+       if countries[country]["medical_advisory"] != "":
+          print("hi")
+
+
+
+
+
+            #print(countries["LUG"]["name"])
+            # return ["Reject"]
+
+
 
 
 def valid_passport_format(passport_number):
@@ -59,5 +82,6 @@ def valid_date_format(date_string):
         return True
     except ValueError:
         return False
+
 
 decide()
