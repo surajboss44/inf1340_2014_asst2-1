@@ -16,7 +16,8 @@ import datetime
 import json
 
 
-def decide(input_file, watchlist_file, countries_file):
+#def decide(input_file, watchlist_file, countries_file):
+def decide():
     """
     Decides whether a traveller's entry into Kanadia should be accepted
 
@@ -26,7 +27,11 @@ def decide(input_file, watchlist_file, countries_file):
         an entry or transit visa is required, and whether there is currently a medical advisory
     :return: List of strings. Possible values of strings are: "Accept", "Reject", "Secondary", and "Quarantine"
     """
-    return ["Reject"]
+    with open("countries.json", "r") as file_reader:
+        countries_list = file_reader.read()
+        countries_list = json.loads(countries_list)
+        #(countries_list)
+   # return ["Reject"]
 
 
 def valid_passport_format(passport_number):
@@ -54,3 +59,5 @@ def valid_date_format(date_string):
         return True
     except ValueError:
         return False
+
+decide()
