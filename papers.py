@@ -53,22 +53,38 @@ def decide(input_file, watchlist_file, countries_file):
                     not item["from"]["city"] and\
                     not item["from"]["region"] and\
                     not item["from"]["country"]:
-                return 'Reject1'
+                return 'Reject'
         else:
-            return 'Reject2'
+            return 'Reject'
 
     for item in inputs:
         """Condition to check if the traveller is coming from country with medical advisory"""
-        country = item["from"]["country"]
+        country = item["from"]["country"].upper()
         if countries[country]["medical_advisory"] != "":
             return 'Quarantine'
+
+    for item in watchlist:
+        """Condition to check if the traveller is on the watchlist"""
+        first_name = item["first_name"].upper()
+        last_name = item["last_name"].upper()
+        passport_number = item["passport"].upper()
+
+        for item2 in inputs:
+            if (first_name == item2["first_name"].upper() and last_name == item2["last_name"].upper()) or\
+                    last_name == item2["last_name"].upper() or\
+                    passport_number == item2["passport"].upper():
+
+                return 'Secondary'
+
+        # if countries[country]["medical_advisory"] != "":
+        #     return 'Quarantine'
 
     return 'Accept'
 
 
 def valid_passport_format(passport_number):
     """
-    Checks whether a pasport number is five sets of five alpha-number characters separated by dashes
+    Checks whether a passport number is five sets of five alpha-number characters separated by dashes
     :param passport_number: alpha-numeric string
     :return: Boolean; True if the format is valid, False otherwise
     """
@@ -82,8 +98,8 @@ def valid_passport_format(passport_number):
 
 def valid_visa_format(visa_number):
     """
-    Checks whether a pasport number is five sets of five alpha-number characters separated by dashes
-    :param passport_number: alpha-numeric string
+    Checks whether a visa number is two sets of five alpha-number characters separated by dashes
+    :param visa_number: alpha-numeric string
     :return: Boolean; True if the format is valid, False otherwise
     """
     visa_format = re.compile('.{5}-.{5}$')
