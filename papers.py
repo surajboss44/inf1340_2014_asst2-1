@@ -16,8 +16,8 @@ import datetime
 import json
 
 
-# def decide(input_file, watchlist_file, countries_file):
-def decide():
+def decide(input_file, watchlist_file, countries_file):
+
     """
     Decides whether a traveller's entry into Kanadia should be accepted
 
@@ -27,34 +27,43 @@ def decide():
         an entry or transit visa is required, and whether there is currently a medical advisory
     :return: List of strings. Possible values of strings are: "Accept", "Reject", "Secondary", and "Quarantine"
     """
-    with open("countries.json", "r") as file_reader:
-        countries_file = file_reader.read()
-        countries = json.loads(countries_file)
-    with open("example_entries.json", "r") as file_reader:
-        sample_entries_file = file_reader.read()
-        sample_entries = json.loads(sample_entries_file)
-    for item in sample_entries:
-        # print(item["passport"])
+    with open(countries_file, "r") as file_reader:
+        countries_content = file_reader.read()
+        countries = json.loads(countries_content)
+
+    with open(input_file, "r") as file_reader:
+        input_content = file_reader.read()
+        inputs = json.loads(input_content)
+
+    with open(watchlist_file, "r") as file_reader:
+        watchlist_file = file_reader.read()
+        watchlist = json.loads(watchlist_file)
+
+    for item in inputs:
         """Condition to check if the traveller details are incomplete"""
-        """if item["passport"] and item["first_name"] and item["last_name"] and item["birth_date"] and item["home"][
-            "city"] and item["home"]["region"] and item["home"]["country"] and item["entry_reason"] and item["from"][
-            "city"] and item["from"]["region"] and item["from"]["country"]:
-            print("")
+        if valid_passport_format(item["passport"]) and valid_date_format(item["birth_date"]):
+            if not item["passport"] and\
+                    not item["first_name"] and\
+                    not item["last_name"] and\
+                    not item["birth_date"] and\
+                    not item["home"]["city"] and\
+                    not item["home"]["region"] and \
+                    not item["home"]["country"] and\
+                    not item["entry_reason"] and\
+                    not item["from"]["city"] and\
+                    not item["from"]["region"] and\
+                    not item["from"]["country"]:
+                return 'Reject1'
         else:
-            print("")"""""
-    for item in sample_entries:
-       country = item["from"]["country"]
-       if countries[country]["medical_advisory"] != "":
-          print("hi")
+            return 'Reject2'
 
+    for item in inputs:
+        """Condition to check if the traveller is coming from country with medical advisory"""
+        country = item["from"]["country"]
+        if countries[country]["medical_advisory"] != "":
+            return 'Quarantine'
 
-
-
-
-            #print(countries["LUG"]["name"])
-            # return ["Reject"]
-
-
+    return 'Accept'
 
 
 def valid_passport_format(passport_number):
@@ -63,11 +72,27 @@ def valid_passport_format(passport_number):
     :param passport_number: alpha-numeric string
     :return: Boolean; True if the format is valid, False otherwise
     """
-    passport_format = re.compile('.{5}-.{5}-.{5}-.{5}-.{5}')
+    passport_format = re.compile('\w{5}-\w{5}-\w{5}-\w{5}-\w{5}$')
 
     if passport_format.match(passport_number):
         return True
     else:
+        return False
+
+
+def valid_visa_format(visa_number):
+    """
+    Checks whether a pasport number is five sets of five alpha-number characters separated by dashes
+    :param passport_number: alpha-numeric string
+    :return: Boolean; True if the format is valid, False otherwise
+    """
+    visa_format = re.compile('.{5}-.{5}$')
+
+    if visa_format.match(visa_number):
+        print("valid time")
+        return True
+    else:
+        print("not valid time")
         return False
 
 
@@ -84,4 +109,4 @@ def valid_date_format(date_string):
         return False
 
 
-decide()
+print(decide('example2.json','watchlist.json','countries.json'))

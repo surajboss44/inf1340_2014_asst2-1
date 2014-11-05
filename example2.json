@@ -1,0 +1,19 @@
+[
+    {
+        "passport": "63Q9B-MX736-5VQTL-8FBR2-12345",
+        "first_name": "TEST",
+        "last_name": "BUCKLEY",
+        "birth_date": "1950-03-06",
+        "home": {
+            "city": "Portage la Prairie",
+            "region": "MB",
+            "country": "KAN"
+        },
+        "entry_reason": "returning",
+        "from": {
+            "city": "Urella",
+            "region": "Parsol",
+            "country": "GOR"
+        }
+    }
+]
