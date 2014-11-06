@@ -79,7 +79,15 @@ def decide(input_file, watchlist_file, countries_file):
         # if countries[country]["medical_advisory"] != "":
         #     return 'Quarantine'
 
-    return 'Accept'
+    """If the reason for entry is to visit and the visitor has a passport from a country from which a visitor
+    visa is required, the traveller must have a valid visa. A valid visa is one that is less than two years
+    old."""
+    for item in inputs:
+            home_country = item["home"]["country"]
+            if item["home"]["country"] == countries[home_country]["code"] and item["visa"]["code"] != "":
+                print(item["first_name"]+" "+item["last_name"] + " accept")
+            elif item["home"]["country"] == countries[home_country]["code"] and item["visa"]["code"] == "":
+                print(item["first_name"] + " " + item["last_name"] + " reject")
 
 
 def valid_passport_format(passport_number):
@@ -124,5 +132,4 @@ def valid_date_format(date_string):
     except ValueError:
         return False
 
-
-print(decide('example2.json','watchlist.json','countries.json'))
+print(decide('example_entries.json','watchlist.json','countries.json'))
