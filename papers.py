@@ -39,12 +39,54 @@ def decide(input_file, watchlist_file, countries_file):
         watchlist_file = file_reader.read()
         watchlist = json.loads(watchlist_file)
 
+    test1 = check_medical_advisory(inputs, countries)
+    test2 = check_completeness(inputs)
+    test3 = check_watchlist(inputs, watchlist)
+    test4 = check_entry_reason(inputs, countries)
+
+    print(test1,test2,test3,test4)
+
+
+
+def check_medical_advisory(inputs, countries):
+    """
+    Checks whether a passport number is five sets of five alpha-number characters separated by dashes
+    :param passport_number: alpha-numeric string
+    :return: Boolean; True if the format is valid, False otherwise
+    """
     for item in inputs:
         """Condition to check if the traveller is coming from country with medical advisory"""
         country = item["from"]["country"].upper()
         if countries[country]["medical_advisory"] != "":
             return 'Quarantine'
 
+
+def check_watchlist(inputs, watchlist):
+    """
+    Checks whether a passport number is five sets of five alpha-number characters separated by dashes
+    :param passport_number: alpha-numeric string
+    :return: Boolean; True if the format is valid, False otherwise
+    """
+    for item in watchlist:
+        """Condition to check if the traveller is on the watchlist"""
+        first_name = item["first_name"].upper()
+        last_name = item["last_name"].upper()
+        passport_number = item["passport"].upper()
+
+        for item2 in inputs:
+            if (first_name == item2["first_name"].upper() and last_name == item2["last_name"].upper()) or\
+                    last_name == item2["last_name"].upper() or\
+                    passport_number == item2["passport"].upper():
+
+                return 'Secondary'
+
+
+def check_completeness(inputs):
+    """
+    Checks whether a passport number is five sets of five alpha-number characters separated by dashes
+    :param passport_number: alpha-numeric string
+    :return: Boolean; True if the format is valid, False otherwise
+    """
     for item in inputs:
         """Condition to check if the traveller details are incomplete"""
         if valid_passport_format(item["passport"]) and valid_date_format(item["birth_date"]):
@@ -63,22 +105,16 @@ def decide(input_file, watchlist_file, countries_file):
         else:
             return 'Reject'
 
-    for item in watchlist:
-        """Condition to check if the traveller is on the watchlist"""
-        first_name = item["first_name"].upper()
-        last_name = item["last_name"].upper()
-        passport_number = item["passport"].upper()
 
-        for item2 in inputs:
-            if (first_name == item2["first_name"].upper() and last_name == item2["last_name"].upper()) or\
-                    last_name == item2["last_name"].upper() or\
-                    passport_number == item2["passport"].upper():
-
-                return 'Secondary'
-
-    for item in inputs:
-        if item["entry_reason"] == "transit":
-            print("hey")
+def check_entry_reason(inputs, countries):
+    """
+    Checks whether a passport number is five sets of five alpha-number characters separated by dashes
+    :param passport_number: alpha-numeric string
+    :return: Boolean; True if the format is valid, False otherwise
+    """
+    # for item in inputs:
+    #     if item["entry_reason"] == "transit":
+    #         print("hey")
 
     """If the reason for entry is to visit and the visitor has a passport from a country from which a visitor
     visa is required, the traveller must have a valid visa. A valid visa is one that is less than two years
@@ -89,22 +125,36 @@ def decide(input_file, watchlist_file, countries_file):
     #             print(item["first_name"]+" "+item["last_name"] + " accept")
     #         elif item["home"]["country"] == countries[home_country]["code"] and item["visa"]["code"] == "":
     #             print(item["first_name"] + " " + item["last_name"] + " reject")
-    for item in inputs:
-            home_country = item["home"]["country"]
-            # Today's date in string format
-            date_in_string_format = str(datetime.date.today())
-            # Today's date in date format
-            date_today = datetime.datetime.strptime(date_in_string_format, "%Y-%m-%d")
-            visa_date_from_file = item["visa"]["date"]
-            visa_date = datetime.datetime.strptime(visa_date_from_file,"%Y-%m-%d")
-            date_difference = int(str(date_today - visa_date)[0:3])
-            print(date_difference)
-            if item["entry_reason"] == "transit" and item["home"]["country"] == countries[home_country]["code"] and (item["visa"]["code"] != " ") and date_difference < 730:
-                print(item["first_name"]+" "+item["last_name"] + " accept")
-            elif item["home"]["country"] == countries[home_country]["code"] and (item["visa"]["code"] == " " or date_difference > 730):
-                print(item["first_name"] + " " + item["last_name"] + " reject")
+    # for item in inputs:
+    #         home_country = item["home"]["country"]
+    #         # Today's date in string format
+    #         date_in_string_format = str(datetime.date.today())
+    #         # Today's date in date format
+    #         date_today = datetime.datetime.strptime(date_in_string_format, "%Y-%m-%d")
+    #         visa_date_from_file = item["visa"]["date"]
+    #         visa_date = datetime.datetime.strptime(visa_date_from_file,"%Y-%m-%d")
+    #         date_difference = int(str(date_today - visa_date)[0:3])
+    #         print(date_difference)
+    #         if item["entry_reason"] == "transit" and item["home"]["country"] == countries[home_country]["code"] and (item["visa"]["code"] != " ") and date_difference < 730:
+    #             print(item["first_name"]+" "+item["last_name"] + " accept")
+    #         elif item["home"]["country"] == countries[home_country]["code"] and (item["visa"]["code"] == " " or date_difference > 730):
+    #             print(item["first_name"] + " " + item["last_name"] + " reject")
 
-    return "Accept"
+
+def date_diff(visa_date_from_file):
+    """
+    Checks whether a passport number is five sets of five alpha-number characters separated by dashes
+    :param passport_number: alpha-numeric string
+    :return: Boolean; True if the format is valid, False otherwise
+    """
+    # Today's date in string format
+    date_in_string_format = str(datetime.date.today())
+    # Today's date in date format
+    date_today = datetime.datetime.strptime(date_in_string_format, "%Y-%m-%d")
+    visa_date_from_file = item["visa"]["date"]
+    visa_date = datetime.datetime.strptime(visa_date_from_file,"%Y-%m-%d")
+    date_difference = int(str(date_today - visa_date)[0:3])
+
 
 def valid_passport_format(passport_number):
     """
@@ -148,4 +198,4 @@ def valid_date_format(date_string):
     except ValueError:
         return False
 
-print(decide('example2.json','watchlist.json','countries.json'))
+print(decide('example2.json', 'watchlist.json', 'countries.json'))
