@@ -40,6 +40,12 @@ def decide(input_file, watchlist_file, countries_file):
         watchlist = json.loads(watchlist_file)
 
     for item in inputs:
+        """Condition to check if the traveller is coming from country with medical advisory"""
+        country = item["from"]["country"].upper()
+        if countries[country]["medical_advisory"] != "":
+            return 'Quarantine'
+
+    for item in inputs:
         """Condition to check if the traveller details are incomplete"""
         if valid_passport_format(item["passport"]) and valid_date_format(item["birth_date"]):
             if not item["passport"] and\
@@ -57,12 +63,6 @@ def decide(input_file, watchlist_file, countries_file):
         else:
             return 'Reject'
 
-    for item in inputs:
-        """Condition to check if the traveller is coming from country with medical advisory"""
-        country = item["from"]["country"].upper()
-        if countries[country]["medical_advisory"] != "":
-            return 'Quarantine'
-
     for item in watchlist:
         """Condition to check if the traveller is on the watchlist"""
         first_name = item["first_name"].upper()
@@ -76,19 +76,22 @@ def decide(input_file, watchlist_file, countries_file):
 
                 return 'Secondary'
 
-        # if countries[country]["medical_advisory"] != "":
-        #     return 'Quarantine'
+    for item in inputs:
+        if item["entry_reason"] == "transit":
+            print("hey")
 
     """If the reason for entry is to visit and the visitor has a passport from a country from which a visitor
     visa is required, the traveller must have a valid visa. A valid visa is one that is less than two years
     old."""
-    for item in inputs:
-            home_country = item["home"]["country"]
-            if item["home"]["country"] == countries[home_country]["code"] and item["visa"]["code"] != "":
-                print(item["first_name"]+" "+item["last_name"] + " accept")
-            elif item["home"]["country"] == countries[home_country]["code"] and item["visa"]["code"] == "":
-                print(item["first_name"] + " " + item["last_name"] + " reject")
+    # for item in inputs:
+    #         home_country = item["home"]["country"]
+    #         if item["home"]["country"] == countries[home_country]["code"] and item["visa"]["code"] != "":
+    #             print(item["first_name"]+" "+item["last_name"] + " accept")
+    #         elif item["home"]["country"] == countries[home_country]["code"] and item["visa"]["code"] == "":
+    #             print(item["first_name"] + " " + item["last_name"] + " reject")
 
+
+    return "Accept"
 
 def valid_passport_format(passport_number):
     """
@@ -110,7 +113,7 @@ def valid_visa_format(visa_number):
     :param visa_number: alpha-numeric string
     :return: Boolean; True if the format is valid, False otherwise
     """
-    visa_format = re.compile('.{5}-.{5}$')
+    visa_format = re.compile('\w{5}-\w{5}$')
 
     if visa_format.match(visa_number):
         print("valid time")
@@ -132,4 +135,4 @@ def valid_date_format(date_string):
     except ValueError:
         return False
 
-print(decide('example_entries.json','watchlist.json','countries.json'))
+print(decide('example2.json','watchlist.json','countries.json'))
