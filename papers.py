@@ -89,7 +89,20 @@ def decide(input_file, watchlist_file, countries_file):
     #             print(item["first_name"]+" "+item["last_name"] + " accept")
     #         elif item["home"]["country"] == countries[home_country]["code"] and item["visa"]["code"] == "":
     #             print(item["first_name"] + " " + item["last_name"] + " reject")
-
+    for item in inputs:
+            home_country = item["home"]["country"]
+            # Today's date in string format
+            date_in_string_format = str(datetime.date.today())
+            # Today's date in date format
+            date_today = datetime.datetime.strptime(date_in_string_format, "%Y-%m-%d")
+            visa_date_from_file = item["visa"]["date"]
+            visa_date = datetime.datetime.strptime(visa_date_from_file,"%Y-%m-%d")
+            date_difference = int(str(date_today - visa_date)[0:3])
+            print(date_difference)
+            if item["entry_reason"] == "transit" and item["home"]["country"] == countries[home_country]["code"] and (item["visa"]["code"] != " ") and date_difference < 730:
+                print(item["first_name"]+" "+item["last_name"] + " accept")
+            elif item["home"]["country"] == countries[home_country]["code"] and (item["visa"]["code"] == " " or date_difference > 730):
+                print(item["first_name"] + " " + item["last_name"] + " reject")
 
     return "Accept"
 
