@@ -112,9 +112,15 @@ def check_entry_reason(inputs, countries):
     :param passport_number: alpha-numeric string
     :return: Boolean; True if the format is valid, False otherwise
     """
-    # for item in inputs:
-    #     if item["entry_reason"] == "transit":
-    #         print("hey")
+    for item in inputs:
+        if item["entry_reason"] == "returning":
+            print("hey")
+        if item["entry_reason"] == "visit":
+            print("hey")
+        if item["entry_reason"] == "transit":
+            print("hey")
+        else:
+            print("hey")
 
     """If the reason for entry is to visit and the visitor has a passport from a country from which a visitor
     visa is required, the traveller must have a valid visa. A valid visa is one that is less than two years
@@ -170,7 +176,7 @@ def valid_passport_format(passport_number):
         return False
 
 
-def valid_visa_format(visa_number):
+def valid_visa(visa_number, date):
     """
     Checks whether a visa number is two sets of five alpha-number characters separated by dashes
     :param visa_number: alpha-numeric string
@@ -178,11 +184,15 @@ def valid_visa_format(visa_number):
     """
     visa_format = re.compile('\w{5}-\w{5}$')
 
-    if visa_format.match(visa_number):
-        print("valid time")
+    # Today's date in date format and computing the difference between visa date and current date
+    date_in_string_format = str(datetime.date.today())
+    date_today = datetime.datetime.strptime(date_in_string_format, "%Y-%m-%d")
+    visa_date = datetime.datetime.strptime(date, "%Y-%m-%d")
+    date_difference = int(str(date_today - visa_date)[0:3])
+
+    if visa_format.match(visa_number) and (valid_date_format(date) and date_difference < 730):
         return True
     else:
-        print("not valid time")
         return False
 
 
@@ -198,4 +208,5 @@ def valid_date_format(date_string):
     except ValueError:
         return False
 
-print(decide('example2.json', 'watchlist.json', 'countries.json'))
+# print(decide('example2.json', 'watchlist.json', 'countries.json'))
+print(valid_visa('YD77Y-1MH6U', '2014-04-30'))
