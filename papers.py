@@ -125,48 +125,28 @@ def check_completeness(item):
         return 'Reject'
 
 
-def check_entry_reason(inputs, countries):
+def check_entry_reason(item, countries):
     """
     Checks for the entry reason of a traveller and does the necessary checks.
     """
-    for item in inputs:
-        home_country = item["home"]["country"]
-        if item["entry_reason"] == "returning":
-            if home_country == "KAN":
-                return "accept"
-        elif item["entry_reason"] == "visit":
-            if home_country == countries[home_country]["code"]and valid_visa(item["visa"]["code"], item["visa"]["date"]):
-                return "accept"
-        elif item["entry_reason"] == "transit":
-            if home_country == countries[home_country]["code"]and valid_visa(item["visa"]["code"], item["visa"]["date"]):
-                return "accept"
-        else:
-            return "reject"
+
+    home_country = item["home"]["country"]
+    if item["entry_reason"] == "returning":
+        if home_country == "KAN":
+            return "accept"
+    elif item["entry_reason"] == "visit":
+        if home_country == countries[home_country]["code"]and valid_visa(item["visa"]["code"], item["visa"]["date"]):
+            return "accept"
+    elif item["entry_reason"] == "transit":
+        if home_country == countries[home_country]["code"]and valid_visa(item["visa"]["code"], item["visa"]["date"]):
+            return "accept"
+    else:
+        return "reject"
 
     """If the reason for entry is to visit and the visitor has a passport from a country from which a visitor
     visa is required, the traveller must have a valid visa. A valid visa is one that is less than two years
     old."""
-    # for item in inputs:
-    #         home_country = item["home"]["country"]
-    #         if item["home"]["country"] == countries[home_country]["code"] and item["visa"]["code"] != "":
-    #             print(item["first_name"]+" "+item["last_name"] + " accept")
-    #         elif item["home"]["country"] == countries[home_country]["code"] and item["visa"]["code"] == "":
-    #             print(item["first_name"] + " " + item["last_name"] + " reject")
-    # for item in inputs:
-    #         home_country = item["home"]["country"]
-    #         # Today's date in string format
-    #         date_in_string_format = str(datetime.date.today())
-    #         # Today's date in date format
-    #         date_today = datetime.datetime.strptime(date_in_string_format, "%Y-%m-%d")
-    #         visa_date_from_file = item["visa"]["date"]
-    #         visa_date = datetime.datetime.strptime(visa_date_from_file,"%Y-%m-%d")
-    #         date_difference = int(str(date_today - visa_date)[0:3])
-    #         print(date_difference)
-    #         if item["entry_reason"] == "transit" and item["home"]["country"] == countries[home_country]["code"] and (item["visa"]["code"] != " ") and date_difference < 730:
-    #             print(item["first_name"]+" "+item["last_name"] + " accept")
-    #         elif item["home"]["country"] == countries[home_country]["code"] and (item["visa"]["code"] == " " or date_difference > 730):
-    #             print(item["first_name"] + " " + item["last_name"] + " reject")
-
+ 
 
 def date_diff(visa_date_from_file):
     """
