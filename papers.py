@@ -46,7 +46,7 @@ def decide(input_file, watchlist_file, countries_file):
             'watch_check': check_watchlist(item, watchlist),
             'entry_check': check_entry_reason(item, countries)
         }
-        print(conditions)
+        #print(conditions)
         if conditions['med_check']:
             output_list.append('Quarantine')
         elif conditions['comp_check']:
