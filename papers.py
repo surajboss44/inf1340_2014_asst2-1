@@ -108,19 +108,21 @@ def check_completeness(inputs):
 
 def check_entry_reason(inputs, countries):
     """
-    Checks whether a passport number is five sets of five alpha-number characters separated by dashes
-    :param passport_number: alpha-numeric string
-    :return: Boolean; True if the format is valid, False otherwise
+    Checks for the entry reason of a traveller and does the necessary checks.
     """
     for item in inputs:
+        home_country = item["home"]["country"]
         if item["entry_reason"] == "returning":
-            print("hey")
+            if home_country == "KAN":
+                return "accept"
         if item["entry_reason"] == "visit":
-            print("hey")
+            if home_country == countries[home_country]["code"]and valid_visa(item["visa"]["code"], item["visa"]["date"]):
+                return "accept"
         if item["entry_reason"] == "transit":
-            print("hey")
+            if home_country == countries[home_country]["code"]and valid_visa(item["visa"]["code"], item["visa"]["date"]):
+                return "accept"
         else:
-            print("hey")
+            return "reject"
 
     """If the reason for entry is to visit and the visitor has a passport from a country from which a visitor
     visa is required, the traveller must have a valid visa. A valid visa is one that is less than two years
@@ -157,7 +159,7 @@ def date_diff(visa_date_from_file):
     date_in_string_format = str(datetime.date.today())
     # Today's date in date format
     date_today = datetime.datetime.strptime(date_in_string_format, "%Y-%m-%d")
-    visa_date_from_file = item["visa"]["date"]
+    #   visa_date_from_file = items["visa"]["date"]
     visa_date = datetime.datetime.strptime(visa_date_from_file,"%Y-%m-%d")
     date_difference = int(str(date_today - visa_date)[0:3])
 
