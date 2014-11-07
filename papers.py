@@ -46,13 +46,15 @@ def decide(input_file, watchlist_file, countries_file):
             'med_check': check_medical_advisory(item, countries),
             'comp_check': check_completeness(item),
             'watch_check': check_watchlist(item, watchlist),
-            # 'entry_check': check_entry_reason(item, countries)
+            'entry_check': check_entry_reason(item, countries)
         }
-
+        print(conditions)
         if conditions['med_check'] == 'Quarantine':
             output_list.append('Quarantine')
 
-        elif conditions['comp_check'] == 'Reject':  # or conditions['entry_check'] == 'Reject':
+        elif conditions['comp_check'] == 'Reject':
+            output_list.append('Reject')
+        elif conditions['entry_check'] == 'Reject':
             output_list.append('Reject')
         elif conditions['watch_check'] == 'Secondary':
             output_list.append('Secondary')
@@ -126,41 +128,31 @@ def check_completeness(item):
 
 
 def check_entry_reason(item, countries):
-    """
-    Checks for the entry reason of a traveller and does the necessary checks.
-    """
-
-    home_country = item["home"]["country"]
-    if item["entry_reason"] == "returning":
-        if home_country == "KAN":
-            return "accept"
-    elif item["entry_reason"] == "visit":
-        if home_country == countries[home_country]["code"]and valid_visa(item["visa"]["code"], item["visa"]["date"]):
-            return "accept"
-    elif item["entry_reason"] == "transit":
-        if home_country == countries[home_country]["code"]and valid_visa(item["visa"]["code"], item["visa"]["date"]):
-            return "accept"
-    else:
-        return "reject"
-
     """If the reason for entry is to visit and the visitor has a passport from a country from which a visitor
     visa is required, the traveller must have a valid visa. A valid visa is one that is less than two years
     old."""
- 
 
-def date_diff(visa_date_from_file):
-    """
-    Checks whether a passport number is five sets of five alpha-number characters separated by dashes
-    :param passport_number: alpha-numeric string
-    :return: Boolean; True if the format is valid, False otherwise
-    """
-    # Today's date in string format
-    date_in_string_format = str(datetime.date.today())
-    # Today's date in date format
-    date_today = datetime.datetime.strptime(date_in_string_format, "%Y-%m-%d")
-    #   visa_date_from_file = items["visa"]["date"]
-    visa_date = datetime.datetime.strptime(visa_date_from_file, "%Y-%m-%d")
-    date_difference = int(str(date_today - visa_date)[0:3])
+    home_country = item["home"]["country"]
+    if item["entry_reason"] == "returning":
+
+        if home_country == "KAN":
+            return
+        else:
+            return "Reject"
+    elif item["entry_reason"] == "visit":
+
+        if home_country == countries[home_country]["code"] and valid_visa(item["visa"]["code"], item["visa"]["date"]):
+            return
+        else:
+            return "Reject"
+    elif item["entry_reason"] == "transit":
+
+        if home_country == countries[home_country]["code"] and valid_visa(item["visa"]["code"], item["visa"]["date"]):
+            return
+        else:
+            return "Reject"
+    else:
+        return "Reject"
 
 
 def valid_passport_format(passport_number):
@@ -185,14 +177,16 @@ def valid_visa(visa_number, date):
     """
     visa_format = re.compile('\w{5}-\w{5}$')
 
-    # Today's date in date format and computing the difference between visa date and current date
-    date_in_string_format = str(datetime.date.today())
-    date_today = datetime.datetime.strptime(date_in_string_format, "%Y-%m-%d")
-    visa_date = datetime.datetime.strptime(date, "%Y-%m-%d")
-    date_difference = int(str(date_today - visa_date)[0:3])
 
-    if visa_format.match(visa_number) and (valid_date_format(date) and date_difference < 730):
-        return True
+    if visa_format.match(visa_number) and valid_date_format(date):
+        current_date = str(datetime.date.today())
+        current_date = datetime.datetime.strptime(current_date, "%Y-%m-%d")
+        visa_date = datetime.datetime.strptime(date, "%Y-%m-%d")
+
+        if abs((current_date - visa_date).days) < 730:
+            return True
+        else:
+            return False
     else:
         return False
 
@@ -210,4 +204,4 @@ def valid_date_format(date_string):
         return False
 
 print(decide('example2.json', 'watchlist.json', 'countries.json'))
-#print(valid_visa('YD77Y-1MH6U', '2014-04-30'))
+#print(valid_visa('YD77Y-1MH6U', '2009-11-01'))
