@@ -39,85 +39,90 @@ def decide(input_file, watchlist_file, countries_file):
         watchlist_file = file_reader.read()
         watchlist = json.loads(watchlist_file)
 
-    output_list = ()
+    output_list = []
     for item in inputs:
 
         conditions = {
             'med_check': check_medical_advisory(item, countries),
-            # 'comp_check': check_completeness(item),
-            # 'watch_check': check_watchlist(item, watchlist),
+            'comp_check': check_completeness(item),
+            'watch_check': check_watchlist(item, watchlist),
             # 'entry_check': check_entry_reason(item, countries)
         }
 
         if conditions['med_check'] == 'Quarantine':
             output_list.append('Quarantine')
-        # elif conditions['comp_check'] == 'Reject' or conditions['entry_check'] == 'Reject':
-        #     output_list.append('Reject')
-        # elif conditions['watch_check'] == 'Secondary':
-        #     output_list.append('Secondary')
+
+        elif conditions['comp_check'] == 'Reject':  # or conditions['entry_check'] == 'Reject':
+            output_list.append('Reject')
+        elif conditions['watch_check'] == 'Secondary':
+            output_list.append('Secondary')
         else:
             output_list.append('Accept')
 
+    return output_list
 
 
 
 
-def check_medical_advisory(inputs, countries):
+def check_medical_advisory(item, countries):
     """
     Checks whether a passport number is five sets of five alpha-number characters separated by dashes
     :param passport_number: alpha-numeric string
     :return: Boolean; True if the format is valid, False otherwise
     """
-    for item in inputs:
-        """Condition to check if the traveller is coming from country with medical advisory"""
-        country = item["from"]["country"].upper()
-        if countries[country]["medical_advisory"] != "":
+
+    """Condition to check if the traveller is coming from country with medical advisory"""
+    from_country = item["from"]["country"].upper()
+
+    if countries[from_country]["medical_advisory"] != "":
+        return 'Quarantine'
+    if "via" in item:
+        via_country = item["via"]["country"].upper()
+        if countries[via_country]["medical_advisory"] != "":
             return 'Quarantine'
 
 
-def check_watchlist(inputs, watchlist):
+def check_watchlist(item, watchlist):
     """
     Checks whether a passport number is five sets of five alpha-number characters separated by dashes
     :param passport_number: alpha-numeric string
     :return: Boolean; True if the format is valid, False otherwise
     """
-    for item in watchlist:
+    for watch_item in watchlist:
         """Condition to check if the traveller is on the watchlist"""
-        first_name = item["first_name"].upper()
-        last_name = item["last_name"].upper()
-        passport_number = item["passport"].upper()
+        first_name = watch_item["first_name"].upper()
+        last_name = watch_item["last_name"].upper()
+        passport_number = watch_item["passport"].upper()
 
-        for item2 in inputs:
-            if (first_name == item2["first_name"].upper() and last_name == item2["last_name"].upper()) or\
-                    last_name == item2["last_name"].upper() or\
-                    passport_number == item2["passport"].upper():
+        if (first_name == item["first_name"].upper() and last_name == item["last_name"].upper()) or\
+                last_name == item["last_name"].upper() or\
+                passport_number == item["passport"].upper():
 
-                return 'Secondary'
+            return 'Secondary'
 
 
-def check_completeness(inputs):
+def check_completeness(item):
     """
     Checks whether a passport number is five sets of five alpha-number characters separated by dashes
     :param passport_number: alpha-numeric string
     :return: Boolean; True if the format is valid, False otherwise
     """
-    for item in inputs:
-        """Condition to check if the traveller details are incomplete"""
-        if valid_passport_format(item["passport"]) and valid_date_format(item["birth_date"]):
-            if not item["passport"] and\
-                    not item["first_name"] and\
-                    not item["last_name"] and\
-                    not item["birth_date"] and\
-                    not item["home"]["city"] and\
-                    not item["home"]["region"] and \
-                    not item["home"]["country"] and\
-                    not item["entry_reason"] and\
-                    not item["from"]["city"] and\
-                    not item["from"]["region"] and\
-                    not item["from"]["country"]:
-                return 'Reject'
-        else:
+    """Condition to check if the traveller details are incomplete"""
+    if valid_passport_format(item["passport"]) and valid_date_format(item["birth_date"]):
+        if not item["passport"] or\
+                not item["first_name"] or\
+                not item["last_name"] or\
+                not item["birth_date"] or\
+                not item["home"]["city"] or\
+                not item["home"]["region"] or \
+                not item["home"]["country"] or\
+                not item["entry_reason"] or\
+                not item["from"]["city"] or\
+                not item["from"]["region"] or\
+                not item["from"]["country"]:
             return 'Reject'
+    else:
+        return 'Reject'
 
 
 def check_entry_reason(inputs, countries):
@@ -174,7 +179,7 @@ def date_diff(visa_date_from_file):
     # Today's date in date format
     date_today = datetime.datetime.strptime(date_in_string_format, "%Y-%m-%d")
     #   visa_date_from_file = items["visa"]["date"]
-    visa_date = datetime.datetime.strptime(visa_date_from_file,"%Y-%m-%d")
+    visa_date = datetime.datetime.strptime(visa_date_from_file, "%Y-%m-%d")
     date_difference = int(str(date_today - visa_date)[0:3])
 
 
@@ -224,5 +229,5 @@ def valid_date_format(date_string):
     except ValueError:
         return False
 
-# print(decide('example2.json', 'watchlist.json', 'countries.json'))
-print(valid_visa('YD77Y-1MH6U', '2014-04-30'))
+print(decide('example2.json', 'watchlist.json', 'countries.json'))
+#print(valid_visa('YD77Y-1MH6U', '2014-04-30'))

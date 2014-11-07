@@ -13,7 +13,12 @@
         "from": {
             "city": "Urella",
             "region": "Parsol",
-            "country": "LUG"
+            "country": "GOR"
+        },
+        "via": {
+            "city": "Weins",
+            "region": "Prada",
+            "country": "KRA"
         }
     }
 ]
