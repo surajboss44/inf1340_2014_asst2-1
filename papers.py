@@ -39,12 +39,26 @@ def decide(input_file, watchlist_file, countries_file):
         watchlist_file = file_reader.read()
         watchlist = json.loads(watchlist_file)
 
-    test1 = check_medical_advisory(inputs, countries)
-    test2 = check_completeness(inputs)
-    test3 = check_watchlist(inputs, watchlist)
-    test4 = check_entry_reason(inputs, countries)
+    output_list = ()
+    for item in inputs:
 
-    print(test1,test2,test3,test4)
+        conditions = {
+            'med_check': check_medical_advisory(item, countries),
+            # 'comp_check': check_completeness(item),
+            # 'watch_check': check_watchlist(item, watchlist),
+            # 'entry_check': check_entry_reason(item, countries)
+        }
+
+        if conditions['med_check'] == 'Quarantine':
+            output_list.append('Quarantine')
+        # elif conditions['comp_check'] == 'Reject' or conditions['entry_check'] == 'Reject':
+        #     output_list.append('Reject')
+        # elif conditions['watch_check'] == 'Secondary':
+        #     output_list.append('Secondary')
+        else:
+            output_list.append('Accept')
+
+
 
 
 
@@ -115,10 +129,10 @@ def check_entry_reason(inputs, countries):
         if item["entry_reason"] == "returning":
             if home_country == "KAN":
                 return "accept"
-        if item["entry_reason"] == "visit":
+        elif item["entry_reason"] == "visit":
             if home_country == countries[home_country]["code"]and valid_visa(item["visa"]["code"], item["visa"]["date"]):
                 return "accept"
-        if item["entry_reason"] == "transit":
+        elif item["entry_reason"] == "transit":
             if home_country == countries[home_country]["code"]and valid_visa(item["visa"]["code"], item["visa"]["date"]):
                 return "accept"
         else:
