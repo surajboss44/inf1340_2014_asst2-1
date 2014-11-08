@@ -88,18 +88,22 @@ def check_watchlist(item, watchlist):
     :param watchlist: dictionary containing list of travellers that require additional screening
     :return: Boolean; True if traveller meets any of the conditions, False otherwise
     """
+
     for watch_item in watchlist:
         """Condition to check if the traveller is on the watchlist"""
-        first_name = watch_item["first_name"].upper()
-        last_name = watch_item["last_name"].upper()
-        passport_number = watch_item["passport"].upper()
+        if all(keys in item for keys in ['first_name', 'last_name', 'passport']):
+            first_name = watch_item["first_name"].upper()
+            last_name = watch_item["last_name"].upper()
+            passport_number = watch_item["passport"].upper()
 
-        if (first_name == item["first_name"].upper() and last_name == item["last_name"].upper()) or\
-                last_name == item["last_name"].upper() or\
-                passport_number == item["passport"].upper():
+            if (first_name == item["first_name"].upper() and last_name == item["last_name"].upper()) or\
+                    last_name == item["last_name"].upper() or\
+                    passport_number == item["passport"].upper():
 
-            return True
-
+                return True
+        else:
+            return False
+            # Returns false because keys are missing, so values cannot be checked. Completion test will fail
     return False
 
 
@@ -153,35 +157,39 @@ def check_entry_reason(item, countries):
     :param countries: dictionary containing a list of countries and visa requirements
     :return: Boolean; True if fails to meet requirements for given entry reason, False otherwise
     """
+    if "home" in item and "country" in item["home"]:
+        home_country = item["home"]["country"]
 
-    home_country = item["home"]["country"]
+        if item["entry_reason"] == "visit":
+            if "visa" in item:
+                if home_country == countries[home_country]["code"] \
+                        and valid_visa(item["visa"]["code"], item["visa"]["date"]):
+                    return False
+                else:
+                    return True
+            else:
+                return True
 
-    if item["entry_reason"] == "visit":
-        if "visa" in item:
-            if home_country == countries[home_country]["code"] and valid_visa(item["visa"]["code"], item["visa"]["date"]):
+        elif item["entry_reason"] == "transit":
+            if "visa" in item:
+                if home_country == countries[home_country]["code"] \
+                        and valid_visa(item["visa"]["code"], item["visa"]["date"]):
+                    return False
+                else:
+                    return True
+            else:
+                return True
+
+        elif item["entry_reason"] == "returning":
+            if home_country == "KAN":
                 return False
             else:
                 return True
         else:
             return True
 
-    elif item["entry_reason"] == "transit":
-        if "visa" in item:
-            if home_country == countries[home_country]["code"] and valid_visa(item["visa"]["code"], item["visa"]["date"]):
-                return False
-            else:
-                return True
-        else:
-            return True
-
-    elif item["entry_reason"] == "returning":
-        if home_country == "KAN":
-            return False
-        else:
-            return True
-    else:
-        return True
-
+    return False
+    # Returns false because keys are missing, so values home country cannot be checked. Completion test will fail
 
 def valid_passport_format(passport_number):
     """
