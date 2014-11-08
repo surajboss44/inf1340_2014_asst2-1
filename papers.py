@@ -68,14 +68,14 @@ def check_medical_advisory(item, countries):
     :param countries: dictionary containing list of countries with medical advisory information
     :return: Boolean; True if format meets any of the conditions, False otherwise
     """
-    from_country = item["from"]["country"].upper()
-
-    if countries[from_country]["medical_advisory"] != "":
-        return True
+    if "from" in item:
+        from_country = item["from"]["country"].upper()
+        if from_country and countries[from_country]["medical_advisory"] != "":
+            return True
 
     if "via" in item:
         via_country = item["via"]["country"].upper()
-        if countries[via_country]["medical_advisory"] != "":
+        if via_country and countries[via_country]["medical_advisory"] != "":
             return True
 
     return False
