@@ -12,7 +12,33 @@
         "from": {
             "city": "Platica",
             "region": "Encerta",
+            "country": ""
+        },
+        "entry_reason": "transit",
+        "visa": {
+            "date": "2014-04-30",
+            "code": "YD77Y-1MH6U"
+        },
+        "via": {
+            "city": "Redux",
+            "region": "Partii",
+            "country": "BRD"
+        }
+    },
+{
+        "passport": "GOD02-JCH7N-K1XDY-VTPWK-NNDTJ",
+        "first_name":"Test",
+        "last_name": "SOLIZ",
+        "birth_date": "1976-09-18",
+        "home": {
+            "city": "Platica",
+            "region": "Encerta",
             "country": "GOR"
+        },
+        "from": {
+            "city": "Platica",
+            "region": "Encerta",
+            "country": ""
         },
         "entry_reason": "transit",
         "visa": {
@@ -25,4 +51,5 @@
             "country": "BRD"
         }
     }
+
 ]

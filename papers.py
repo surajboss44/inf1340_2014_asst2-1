@@ -46,7 +46,7 @@ def decide(input_file, watchlist_file, countries_file):
             'watch_check': check_watchlist(item, watchlist),
             'entry_check': check_entry_reason(item, countries)
         }
-        print(conditions)
+        #print(conditions)
         if conditions['med_check']:
             output_list.append('Quarantine')
         elif conditions['comp_check']:
@@ -168,7 +168,7 @@ def check_entry_reason(item, countries):
                 else:
                     return True
             else:
-                return True
+                return False
 
         elif item["entry_reason"] == "transit":
             if "visa" in item:
@@ -178,7 +178,7 @@ def check_entry_reason(item, countries):
                 else:
                     return True
             else:
-                return True
+                return False
 
         elif item["entry_reason"] == "returning":
             if home_country == "KAN":
@@ -241,5 +241,5 @@ def valid_date_format(date_string):
     except ValueError:
         return False
 
-print(decide('example2.json', 'watchlist.json', 'countries.json'))
+print(decide('test_watchlist.json', 'watchlist.json', 'countries.json'))
 #print(valid_visa('YD77Y-1MH6U', '2009-11-01'))
