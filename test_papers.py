@@ -25,5 +25,36 @@ def test_files():
     with pytest.raises(FileNotFoundError):
         decide("test_returning_citizen.json", "", "countries.json")
 
-# add functions for other tests
+
+"""function to check if incomplete traveller entries are handled by the program code"""
+
+
+def test_completeness():
+    assert decide("test_completeness.json", "watchlist.json", "countries.json") == ["Reject", "Reject", "Reject"]
+
+
+"""Function to check if traveler entries are handled based upon their reason of visit. """
+
+
+def test_entry_reason():
+    assert decide("test_entry_reason.json", "watchlist.json", "countries.json") == ["Quarantine", "Reject", "Accept"]
+
+
+"""Function to check if travellers with invalid passports get rejected"""
+
+
+def test_invalid_passport():
+
+    assert decide("test_invalid_passport.json", "watchlist.json", "countries.json") == ["Reject", "Reject"]
+
+
+"""Function to check if travellers with invalid visas get rejected"""
+
+
+def test_invalid_passport():
+
+    assert decide("test_invalid_visa.json", "watchlist.json", "countries.json") == ["Reject", "Reject"]
+
+
+
 

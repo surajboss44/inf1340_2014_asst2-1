@@ -241,5 +241,5 @@ def valid_date_format(date_string):
     except ValueError:
         return False
 
-print(decide('test_watchlist.json', 'watchlist.json', 'countries.json'))
+#print(decide('test_invalid_passport.json', 'watchlist.json', 'countries.json'))
 #print(valid_visa('YD77Y-1MH6U', '2009-11-01'))
