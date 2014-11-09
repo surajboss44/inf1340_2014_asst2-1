@@ -157,7 +157,7 @@ def check_entry_reason(item, countries):
     :param countries: dictionary containing a list of countries and visa requirements
     :return: Boolean; True if fails to meet requirements for given entry reason, False otherwise
     """
-    if "home" in item and "country" in item["home"]:
+    if "home" in item and "country" in item["home"] and item["home"]["country"] != "":
         home_country = item["home"]["country"]
 
         if item["entry_reason"] == "visit":
