@@ -74,7 +74,6 @@ def decide(input_file, watchlist_file, countries_file):
         Once all of the conditions have been checked for, the if statement prioritizes the results
         and appends the result to the output list
         '''
-        #print(conditions)
         if conditions['med_check']:
             output_list.append('Quarantine')
         elif conditions['comp_check']:
@@ -96,12 +95,14 @@ def check_medical_advisory(item, countries):
     :param countries: dictionary containing list of countries with medical advisory information
     :return: Boolean; True if format meets any of the conditions, False otherwise
     """
-    if "from" in item:  # The key 'from' is checked before continuing with medical advisory check
+    if "from" in item and "country" in item["from"]:
+    # The key 'from' is checked before continuing with medical advisory check
         from_country = item["from"]["country"].upper()
         if from_country and countries[from_country]["medical_advisory"] != "":
             return True
 
-    if "via" in item:  # The key 'via' is checked before continuing with medical advisory check
+    if "via" in item and "country" in item["via"]:
+    # The key 'via' is checked before continuing with medical advisory check
         via_country = item["via"]["country"].upper()
         if via_country and countries[via_country]["medical_advisory"] != "":
             return True
@@ -272,7 +273,3 @@ def valid_date_format(date_string):
         return True
     except ValueError:
         return False
-
-
-#print(decide('test_invalid_keys.json', 'watchlist.json', 'countries.json'))
-# print(valid_visa('YD77Y-1MH6U', '2009-11-01'))
