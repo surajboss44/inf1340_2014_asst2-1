@@ -37,14 +37,13 @@ def test_completeness():
 
 
 def test_entry_reason():
-    assert decide("test_entry_reason.json", "watchlist.json", "countries.json") == ["Quarantine", "Reject", "Accept"]
+    assert decide("test_entry_reason.json", "watchlist.json", "countries.json") == ['Reject', 'Reject', 'Accept']
 
 
 """Function to check if travellers with invalid passports get rejected"""
 
 
 def test_invalid_passport():
-
     assert decide("test_invalid_passport.json", "watchlist.json", "countries.json") == ["Reject", "Reject"]
 
 
@@ -52,9 +51,20 @@ def test_invalid_passport():
 
 
 def test_invalid_passport():
-
     assert decide("test_invalid_visa.json", "watchlist.json", "countries.json") == ["Reject", "Reject"]
 
 
+""" To test if a JSON file that does not exist is handled"""
 
+
+def test_missing_file():
+    with pytest.raises(FileNotFoundError):
+        decide("test_json_file.json", "watchlist.json", "countries.json")
+
+""" To test if a JSON file with invalid values is handled"""
+
+
+def test_invalid_file():
+    with pytest.raises(ValueError):
+        decide("test_invalid_file.json", "watchlist.json", "countries.json")
 

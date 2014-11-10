@@ -25,17 +25,35 @@ def decide(input_file, watchlist_file, countries_file):
         an entry or transit visa is required, and whether there is currently a medical advisory
     :return: List of strings. Possible values of strings are: "Accept", "Reject", "Secondary", and "Quarantine"
     """
-    with open(countries_file, "r") as file_reader:
-        countries_content = file_reader.read()
-        countries = json.loads(countries_content)
+    try:
+        with open(countries_file, "r") as file_reader:
+            countries_content = file_reader.read()
+        try:
+            countries = json.loads(countries_content)
+        except ValueError:
+            raise ValueError
+    except FileNotFoundError:
+        raise FileNotFoundError
 
-    with open(input_file, "r") as file_reader:
-        input_content = file_reader.read()
-        inputs = json.loads(input_content)
+    try:
+        with open(input_file, "r") as file_reader:
+            input_content = file_reader.read()
+        try:
+            inputs = json.loads(input_content)
+        except ValueError:
+            raise ValueError
+    except FileNotFoundError:
+        raise FileNotFoundError
 
-    with open(watchlist_file, "r") as file_reader:
-        watchlist_file = file_reader.read()
-        watchlist = json.loads(watchlist_file)
+    try:
+        with open(watchlist_file, "r") as file_reader:
+            watchlist_file = file_reader.read()
+        try:
+            watchlist = json.loads(watchlist_file)
+        except ValueError:
+            raise ValueError
+    except FileNotFoundError:
+        raise FileNotFoundError
 
     output_list = []
     for item in inputs:
@@ -245,5 +263,5 @@ def valid_date_format(date_string):
         return False
 
 
-print(decide('test_entry_reason.json', 'watchlist.json', 'countries.json'))
+#print(decide('', 'watchlist.json', 'countries.json'))
 # print(valid_visa('YD77Y-1MH6U', '2009-11-01'))
