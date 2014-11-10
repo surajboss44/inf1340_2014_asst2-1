@@ -55,6 +55,11 @@ def decide(input_file, watchlist_file, countries_file):
     except FileNotFoundError:
         raise FileNotFoundError
 
+    '''
+    The results of each condition check is stored in a dictionary called conditions.
+    Functions related to those checks are called in the dictionary itself.
+    This is done for each traveller, and their result is stored in the output_list
+    '''
     output_list = []
     for item in inputs:
 
@@ -64,7 +69,11 @@ def decide(input_file, watchlist_file, countries_file):
             'watch_check': check_watchlist(item, watchlist),
             'entry_check': check_entry_reason(item, countries)
         }
-        # print(conditions)
+
+        '''
+        Once all of the conditions have been checked for, the if statement prioritizes the results
+        and appends the result to the output list
+        '''
         if conditions['med_check']:
             output_list.append('Quarantine')
         elif conditions['comp_check']:
@@ -86,12 +95,12 @@ def check_medical_advisory(item, countries):
     :param countries: dictionary containing list of countries with medical advisory information
     :return: Boolean; True if format meets any of the conditions, False otherwise
     """
-    if "from" in item:
+    if "from" in item:  # The key 'from' is checked before continuing with medical advisory check
         from_country = item["from"]["country"].upper()
         if from_country and countries[from_country]["medical_advisory"] != "":
             return True
 
-    if "via" in item:
+    if "via" in item:  # The key 'via' is checked before continuing with medical advisory check
         via_country = item["via"]["country"].upper()
         if via_country and countries[via_country]["medical_advisory"] != "":
             return True
@@ -108,19 +117,19 @@ def check_watchlist(item, watchlist):
     """
 
     for watch_item in watchlist:
-        """Condition to check if the traveller is on the watchlist"""
         if all(keys in item for keys in ['first_name', 'last_name', 'passport']):
+        # Check to ensure necessary keys exist
             first_name = watch_item["first_name"].upper()
             last_name = watch_item["last_name"].upper()
             passport_number = watch_item["passport"].upper()
 
             if (first_name == item["first_name"].upper() and last_name == item["last_name"].upper()) or \
-                            last_name == item["last_name"].upper() or \
-                            passport_number == item["passport"].upper():
+                    last_name == item["last_name"].upper() or \
+                    passport_number == item["passport"].upper():
                 return True
         else:
             return False
-            # Returns false because keys are missing, so values cannot be checked. Completion test will fail
+        # Returns false because keys are missing, so values cannot be checked. Completion test will fail
     return False
 
 
@@ -130,6 +139,7 @@ def check_completeness(item):
     :param item: dictionary containing traveller information
     :return: Boolean; True if invalid birth date, passport, or missing req info. False otherwise
     """
+    #  Initialize a dictionary with all of the required keys that must be present in the JSON file
     required_items = {
 
         "from": ["country", "region", "city"],
@@ -141,7 +151,7 @@ def check_completeness(item):
         "entry_reason": ''
     }
 
-    if all(keys in item for keys in required_items.keys()):
+    if all(keys in item for keys in required_items.keys()):  # Check for top level keys
         for key in required_items.keys():
             if type(required_items[key]) is str and type(item[key]) is str:
                 if key == 'passport':
@@ -150,9 +160,9 @@ def check_completeness(item):
                 elif key == 'birth_date':
                     if not valid_date_format(item["birth_date"]):
                         return True
-                elif not item[key]:
+                elif not item[key]:  # Check to ensure required values are not empty
                     return True
-            elif type(required_items[key]) is list and type(item[key]) is dict:
+            elif type(required_items[key]) is list and type(item[key]) is dict:  # Check for sub keys
                 if all(sub_keys in item[key] for sub_keys in required_items[key]):
                     for sub_key in item[key]:
                         if not item[key][sub_key]:
