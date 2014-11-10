@@ -50,7 +50,7 @@ def test_invalid_passport():
 """Function to check if travellers with invalid visas get rejected"""
 
 
-def test_invalid_passport():
+def test_invalid_visa():
     assert decide("test_invalid_visa.json", "watchlist.json", "countries.json") == ["Reject", "Reject"]
 
 
@@ -61,6 +61,7 @@ def test_missing_file():
     with pytest.raises(FileNotFoundError):
         decide("test_json_file.json", "watchlist.json", "countries.json")
 
+
 """ To test if a JSON file with invalid values is handled"""
 
 
@@ -68,3 +69,16 @@ def test_invalid_file():
     with pytest.raises(ValueError):
         decide("test_invalid_file.json", "watchlist.json", "countries.json")
 
+
+""" To test for invalid keys in the JSON file"""
+
+
+def test_invalid_keys():
+    decide("test_invalid_keys.json", "watchlist.json", "countries.json") == ["Quarantine", "Reject"]
+
+
+""" To test for invalid date format in the JSON file"""
+
+
+def test_invalid_date():
+    decide("test_invalid_date.json", "watchlist.json", "countries.json") == ["Quarantine", "Accept", "Reject"]
