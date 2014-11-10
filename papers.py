@@ -74,6 +74,7 @@ def decide(input_file, watchlist_file, countries_file):
         Once all of the conditions have been checked for, the if statement prioritizes the results
         and appends the result to the output list
         '''
+        print(conditions)
         if conditions['med_check']:
             output_list.append('Quarantine')
         elif conditions['comp_check']:
@@ -273,5 +274,5 @@ def valid_date_format(date_string):
         return False
 
 
-#print(decide('', 'watchlist.json', 'countries.json'))
+print(decide('test_invalid_keys.json', 'watchlist.json', 'countries.json'))
 # print(valid_visa('YD77Y-1MH6U', '2009-11-01'))
