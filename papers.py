@@ -46,7 +46,7 @@ def decide(input_file, watchlist_file, countries_file):
             'watch_check': check_watchlist(item, watchlist),
             'entry_check': check_entry_reason(item, countries)
         }
-        #print(conditions)
+        # print(conditions)
         if conditions['med_check']:
             output_list.append('Quarantine')
         elif conditions['comp_check']:
@@ -96,10 +96,9 @@ def check_watchlist(item, watchlist):
             last_name = watch_item["last_name"].upper()
             passport_number = watch_item["passport"].upper()
 
-            if (first_name == item["first_name"].upper() and last_name == item["last_name"].upper()) or\
-                    last_name == item["last_name"].upper() or\
-                    passport_number == item["passport"].upper():
-
+            if (first_name == item["first_name"].upper() and last_name == item["last_name"].upper()) or \
+                            last_name == item["last_name"].upper() or \
+                            passport_number == item["passport"].upper():
                 return True
         else:
             return False
@@ -159,28 +158,31 @@ def check_entry_reason(item, countries):
     """
     if "home" in item and "country" in item["home"] and item["home"]["country"] != "":
         home_country = item["home"]["country"]
-
-        if item["entry_reason"] == "visit":
-            if "visa" in item:
-                if home_country == countries[home_country]["code"] \
-                        and valid_visa(item["visa"]["code"], item["visa"]["date"]):
-                    return False
+        if item["entry_reason"] == "visit":  # To check if the traveller is visiting Kanadia
+            if int(countries[home_country]["visitor_visa_required"]) == 1:
+                if "visa" in item:
+                    if home_country == countries[home_country]["code"] \
+                            and valid_visa(item["visa"]["code"], item["visa"]["date"]):
+                        return False
+                    else:
+                        return True
                 else:
                     return True
             else:
                 return False
-
-        elif item["entry_reason"] == "transit":
-            if "visa" in item:
-                if home_country == countries[home_country]["code"] \
-                        and valid_visa(item["visa"]["code"], item["visa"]["date"]):
-                    return False
+        elif item["entry_reason"] == "transit":  # To check if the traveller is transiting via Kanadia
+            if int(countries[home_country]["transit_visa_required"]) == 1:
+                if "visa" in item:
+                    if home_country == countries[home_country]["code"] \
+                            and valid_visa(item["visa"]["code"], item["visa"]["date"]):
+                        return False
+                    else:
+                        return True
                 else:
                     return True
             else:
                 return False
-
-        elif item["entry_reason"] == "returning":
+        elif item["entry_reason"] == "returning":  # To check if the traveller is returning to Kanadia
             if home_country == "KAN":
                 return False
             else:
@@ -190,6 +192,7 @@ def check_entry_reason(item, countries):
 
     return False
     # Returns false because keys are missing, so values home country cannot be checked. Completion test will fail
+
 
 def valid_passport_format(passport_number):
     """
@@ -241,5 +244,6 @@ def valid_date_format(date_string):
     except ValueError:
         return False
 
-#print(decide('test_invalid_passport.json', 'watchlist.json', 'countries.json'))
-#print(valid_visa('YD77Y-1MH6U', '2009-11-01'))
+
+print(decide('test_entry_reason.json', 'watchlist.json', 'countries.json'))
+# print(valid_visa('YD77Y-1MH6U', '2009-11-01'))
