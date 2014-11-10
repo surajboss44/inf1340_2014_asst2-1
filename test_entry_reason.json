@@ -1,0 +1,59 @@
+[
+ {
+        "passport": "GOD02-JCH7N-K1XDY-VTPWK-NNDTJ",
+        "first_name": "DENISHA",
+        "last_name": "SOLIZ",
+        "birth_date": "1976-09-18",
+        "home": {
+            "city": "Platica",
+            "region": "Encerta",
+            "country": "GOR"
+        },
+        "from": {
+            "city": "Platica",
+            "region": "Encerta",
+            "country": "GOR"
+        },
+        "entry_reason": "transit"    
+},
+{
+        "passport": "YK2EI-KG35I-ENS1D-3JOAT-UGBT1",
+        "first_name": "MARQUITTA",
+        "last_name": "HANKINS",
+        "birth_date": "1980-03-01",
+        "home": {
+            "city": "Vanes",
+            "region": "Fanit",
+            "country": "FRY"
+        },
+        "from": {
+            "city": "Vanes",
+            "region": "Fanit",
+            "country": "FRY"
+        },
+        "entry_reason": "visit"
+        
+    },
+{
+        "passport": "V448P-CTHC5-PQ9OR-PIUGH-Y5FSQ",
+        "first_name": "STEPHNIE",
+        "last_name": "PEEK",
+        "birth_date": "1948-11-04",
+        "home": {
+            "city": "Truro",
+            "region": "NS",
+            "country": "KAN"
+        },
+        "entry_reason": "returning",
+        "from": {
+            "city": "Lettuce",
+            "region": "Brassica",
+            "country": "CFR"
+        },
+        "via": {
+            "city": "Platica",
+            "region": "Encerta",
+            "country": "CFR"
+        }
+    }
+]
