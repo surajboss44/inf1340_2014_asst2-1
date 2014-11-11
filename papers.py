@@ -31,9 +31,9 @@ def decide(input_file, watchlist_file, countries_file):
         try:
             countries = json.loads(countries_content)
         except ValueError:
-            raise ValueError
+            raise ValueError("Error in the countries json file")
     except FileNotFoundError:
-        raise FileNotFoundError
+        raise FileNotFoundError("Countries list file could not be found in the directory")
 
     try:
         with open(input_file, "r") as file_reader:
@@ -41,9 +41,9 @@ def decide(input_file, watchlist_file, countries_file):
         try:
             inputs = json.loads(input_content)
         except ValueError:
-            raise ValueError
+            raise ValueError("Error in the countries json file")
     except FileNotFoundError:
-        raise FileNotFoundError
+        raise FileNotFoundError("Inputs file could not be found in the directory")
 
     try:
         with open(watchlist_file, "r") as file_reader:
@@ -51,9 +51,9 @@ def decide(input_file, watchlist_file, countries_file):
         try:
             watchlist = json.loads(watchlist_file)
         except ValueError:
-            raise ValueError
+            raise ValueError("Error in the watchlist json file")
     except FileNotFoundError:
-        raise FileNotFoundError
+        raise FileNotFoundError("Watchlist file could not be found in the directory")
 
     '''
     The results of each condition check is stored in a dictionary called conditions.
